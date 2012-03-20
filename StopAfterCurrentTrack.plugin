@@ -6,4 +6,4 @@ Name=Stop After Current Track
 Description=A plugin which adds a button and menus to stop playback after current track ends.
 Authors=Srijan Choudhary <srijan4@gmail.com>
 Copyright=Copyright © 2012 Srijan Choudhary
-Website=http://www.srijn.net/projects/StopAfterCurrentTrack
+Website=https://github.com/srijan/StopAfterCurrentTrack-Plugin-for-Rhythmbox
