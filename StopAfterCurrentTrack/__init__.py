@@ -19,7 +19,7 @@ class StopAfterCurrentTrackPlugin (GObject.Object, Peas.Activatable):
     def do_activate(self):
         self.stop_status = False
         shell = self.object
-        self.action = Gtk.Action(
+        self.action = Gtk.ToggleAction(
                 name='StopAfterCurrentTrack',
                 label=('Stop After Current Track'),
                 tooltip=('Stop playback after current song'),
@@ -28,22 +28,35 @@ class StopAfterCurrentTrackPlugin (GObject.Object, Peas.Activatable):
         self.activate_id = self.action.connect('activate',self.toggle_status,shell)
         self.action_group = Gtk.ActionGroup(name='StopAfterCurrentTrackPluginActions')
         self.action_group.add_action(self.action)
+        self.action.set_active(self.stop_status)
 
         uim = shell.props.ui_manager
         uim.insert_action_group(self.action_group,0)
         self.ui_id = uim.add_ui_from_string(menuui_string)
         uim.ensure_update()
 
+        sp = shell.props.shell_player
+        self.pec_id = sp.connect('playing-song-changed', self.playing_entry_changed)
+
     def do_deactivate(self):
+        print "Deactivating Plugin"
         shell = self.object
         uim = shell.props.ui_manager
         uim.remove_ui(self.ui_id)
         uim.remove_action_group(self.action_group)
+        sp = shell.props.shell_player
+        sp.disconnect (self.pec_id)
         self.action_group = None
         self.action = None
-        self.stop_status = None
 
     def toggle_status(self,action,shell):
         self.stop_status = not self.stop_status
-        print "Status Toggled"
+        self.action.set_active(self.stop_status)
+        print "Status toggled to", self.stop_status
+
+    def playing_entry_changed(self, sp, entry):
+        if self.stop_status:
+            sp.stop()
+            self.stop_status = False
+            self.action.set_active(self.stop_status)
 
