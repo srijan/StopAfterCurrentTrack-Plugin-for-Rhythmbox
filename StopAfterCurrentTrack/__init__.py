@@ -1,12 +1,17 @@
 from gi.repository import Gtk, GObject, RB, Peas
 
-menuui_string = """
+ui_string = """
 <ui>
     <menubar name="MenuBar">
         <menu name="ControlMenu" action="Control">
             <menuitem name="StopAfterCurrentTrack" action="StopAfterCurrentTrack"/>
         </menu>
     </menubar>
+    <toolbar name="ToolBar">
+        <placeholder name="ToolBarPluginPlaceholder">
+            <toolitem name="StopAfterCurrentTrack" action="StopAfterCurrentTrack"/>
+        </placeholder>
+    </toolbar>
 </ui>
 """
 
@@ -24,7 +29,7 @@ class StopAfterCurrentTrackPlugin (GObject.Object, Peas.Activatable):
                 name='StopAfterCurrentTrack',
                 label=('Stop After Current Track'),
                 tooltip=('Stop playback after current song'),
-                stock_id='media-stop'
+                stock_id=Gtk.STOCK_MEDIA_STOP
                 )
         self.activate_id = self.action.connect('activate',self.toggle_status,shell)
         self.action_group = Gtk.ActionGroup(name='StopAfterCurrentTrackPluginActions')
@@ -34,7 +39,7 @@ class StopAfterCurrentTrackPlugin (GObject.Object, Peas.Activatable):
 
         uim = shell.props.ui_manager
         uim.insert_action_group(self.action_group,0)
-        self.ui_id = uim.add_ui_from_string(menuui_string)
+        self.ui_id = uim.add_ui_from_string(ui_string)
         uim.ensure_update()
 
         sp = shell.props.shell_player
