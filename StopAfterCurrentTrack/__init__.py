@@ -30,6 +30,7 @@ class StopAfterCurrentTrackPlugin (GObject.Object, Peas.Activatable):
         self.action_group = Gtk.ActionGroup(name='StopAfterCurrentTrackPluginActions')
         self.action_group.add_action(self.action)
         self.action.set_active(False)
+        self.action.set_sensitive(False)
 
         uim = shell.props.ui_manager
         uim.insert_action_group(self.action_group,0)
@@ -53,7 +54,10 @@ class StopAfterCurrentTrackPlugin (GObject.Object, Peas.Activatable):
         print "Plugin Deactivated"
 
     def toggle_status(self,action,shell):
-        self.stop_status = not self.stop_status
+        if action.get_active():
+            self.stop_status = True
+        else:
+            self.stop_status = False
         print self.stop_status
 
     def playing_entry_changed(self, sp, entry):
