@@ -17,6 +17,7 @@ class StopAfterCurrentTrackPlugin (GObject.Object, Peas.Activatable):
         super(StopAfterCurrentTrackPlugin, self).__init__()
 
     def do_activate(self):
+        print "Activating Plugin"
         self.stop_status = False
         shell = self.object
         self.action = Gtk.ToggleAction(
@@ -28,7 +29,7 @@ class StopAfterCurrentTrackPlugin (GObject.Object, Peas.Activatable):
         self.activate_id = self.action.connect('activate',self.toggle_status,shell)
         self.action_group = Gtk.ActionGroup(name='StopAfterCurrentTrackPluginActions')
         self.action_group.add_action(self.action)
-        self.action.set_active(self.stop_status)
+        self.action.set_active(False)
 
         uim = shell.props.ui_manager
         uim.insert_action_group(self.action_group,0)
@@ -37,6 +38,7 @@ class StopAfterCurrentTrackPlugin (GObject.Object, Peas.Activatable):
 
         sp = shell.props.shell_player
         self.pec_id = sp.connect('playing-song-changed', self.playing_entry_changed)
+        print "Plugin Activated"
 
     def do_deactivate(self):
         print "Deactivating Plugin"
@@ -48,15 +50,20 @@ class StopAfterCurrentTrackPlugin (GObject.Object, Peas.Activatable):
         sp.disconnect (self.pec_id)
         self.action_group = None
         self.action = None
+        print "Plugin Deactivated"
 
     def toggle_status(self,action,shell):
         self.stop_status = not self.stop_status
-        self.action.set_active(self.stop_status)
-        print "Status toggled to", self.stop_status
+        print self.stop_status
 
     def playing_entry_changed(self, sp, entry):
-        if self.stop_status:
-            sp.stop()
-            self.stop_status = False
-            self.action.set_active(self.stop_status)
+        print "Playing entry changed"
+        print entry
+        if entry is not None:
+            self.action.set_sensitive(True)
+            if self.stop_status:
+                self.action.set_active(False)
+                sp.stop()
+        else:
+            self.action.set_sensitive(False)
 
