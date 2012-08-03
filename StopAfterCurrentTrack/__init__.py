@@ -27,7 +27,7 @@ class StopAfterCurrentTrackPlugin (GObject.Object, Peas.Activatable):
         shell = self.object
         self.action = Gtk.ToggleAction(
                 name='StopAfterCurrentTrack',
-                label=('Stop After Current Track'),
+                label=('Stop After'),
                 tooltip=('Stop playback after current song'),
                 stock_id=Gtk.STOCK_MEDIA_STOP
                 )
